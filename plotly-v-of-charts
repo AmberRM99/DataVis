@@ -1,0 +1,340 @@
+<script>    
+
+  d3.csv('/malaria.csv', function(err, rows){
+    console.log(rows)
+
+  function filter_and_unpack(rows, key, year) {
+    console.log(rows)
+    console.log(typeof rows)
+  return rows.filter(row => row['certified'] <= year).map(row => row[key])
+  }
+
+  var frames = []
+  var slider_steps = []
+
+  var n = 12;
+  var num = 2009;
+  for (var i = 0; i <= n; i++) {
+    var z = filter_and_unpack(rows, 'certified', num)
+    var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+    frames[i] = {data: [{z: z, locations: locations, text: locations}], name: num}
+    slider_steps.push ({
+        label: num.toString(),
+        method: "animate",
+        args: [[num], {
+            mode: "immediate",
+            transition: {duration: 300},
+            frame: {duration: 300}
+          }
+        ]
+      })
+    num = num + 1
+  }
+
+var data = [{
+  marker_line_width: 30,
+      type: 'choropleth',
+      locationmode: 'ISO-3',
+      locations: frames[0].data[0].locations,
+      z: frames[0].data[0].z,
+      text: frames[0].data[0].locations,
+      colorscale:[[0,"#488699"], [0.4,"#48998C"], 
+    [1, "#F1FCFA"]], 
+      zauto: false,
+      // zmin: 1963,30
+      zmax: 2021
+
+}];
+
+
+var layout = {
+  geo: {
+      showland: true,
+      landcolor:"rgba(0,0,0,0)",  
+      bgcolor:"rgba(0,0,0,0)",
+      lakecolor:"rgba(0,0,0,0)",
+      oceancolor:"rgba(0,0,0,0)",
+      countrycolor: "black" ,
+        coastlinecolor:"#ccc",
+      // projection: {
+      //     type: 'robinson'
+      // }
+  },
+ automargin:true,
+  font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#BAE9E4'
+  },
+
+  paper_bgcolor:"rgba(0,0,0,0)",
+   height:800,
+    updatemenus: [{
+      x: 0.1,
+      y: 0,
+      yanchor: "top",
+      xanchor: "right",
+      showactive: false,
+      direction: "left",
+      type: "buttons",
+      pad: {"t": 87, "r": 10},
+      buttons: [{
+        method: "animate",
+        args: [null, {
+          fromcurrent: true,
+          transition: {
+            duration: 200,
+          },
+          frame: {
+            duration: 500
+          }
+        }],
+        label: "Play"
+      }, {
+        method: "animate",
+        args: [   
+          [null],
+          {
+            mode: "immediate",
+            transition: {
+              duration: 0
+            },
+            frame: {
+              duration: 0
+            }
+          }
+        ],
+        label: "Pause"
+      }]
+    }],
+    sliders: [{
+      active: 0,
+      steps: slider_steps,
+      x: 0.1,
+      len: 0.9,
+      xanchor: "left",
+      y: 0,
+      yanchor: "top",
+      pad: {t: 50, b: 10},
+      currentvalue: {
+        visible: true,
+        prefix: "Year:",
+        xanchor: "right",
+        font: {
+          size: 20,
+          color: "#9FE0D8"
+        }
+      },
+      transition: {
+        duration: 300,
+        easing: "cubic-in-out"
+      }
+    }]
+};
+
+var config = {responsive: true}
+
+Plotly.newPlot('myDiv', data, layout, config).then(function() {
+    Plotly.addFrames('myDiv', frames);
+  });
+})
+
+</script>
+
+<script>
+
+Plotly.newPlot('AIDS', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [2399929, 2370918, 2342046, 2314238, 2285709, 2265234, 2243665, 2196714, 2131659, 2042488, ],
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2020]},
+  yaxis: {range: [2042488, 2399929]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+
+}).then(function () {
+  Plotly.addFrames('AIDS', [
+    {
+      data: [{x: [0, 0], y: [0, 0]}],
+      name: 'frame1'
+    }, {
+      data: [{x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [2399929, 2370918, 2342046, 2314238, 2285709, 2265234, 2243665, 2196714, 2131659, 2042488 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationAids() {
+  Plotly.animate('AIDS', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+
+</script>
+<script>
+  Plotly.newPlot('polio', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ],
+  
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2022]},
+  yaxis: {range: [0, 1787]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+
+}).then(function () {
+  Plotly.addFrames('polio', [
+    {
+      data: [{x: [0, 0], y: [0, 0]}],
+      name: 'frame1'
+    }, {
+      data: [{  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationPolio() {
+  Plotly.animate('polio', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>
+
+<script>
+  Plotly.newPlot('TB', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+  y: [1417403,	1386717,	1353969	,1321313,	1289369,	1261016,	1236143,	1213057],
+  
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2022]},
+  yaxis: {range: [0, 1787]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+
+}).then(function () {
+  Plotly.addFrames('TB', [
+    {
+      data: [{x: [0, 0], y: [0, 0]}],
+      name: 'frame1'
+    }, {
+      data: [{  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationTB() {
+  Plotly.animate('TB', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>

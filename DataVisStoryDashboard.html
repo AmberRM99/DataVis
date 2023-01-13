@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+<html lang="en" class="mac chrome102 js"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>Example Title</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+<script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+html, body, section {
+  block-size: 100%;
+  background: #15294A;
+  font-family:'Roboto Condensed'
+}
+
+h1{
+    color:#F1FCFA;
+    text-align:center;
+    margin: 1rem 0 2rem;
+}
+
+.dropbtn {
+    background-color: #377e72;
+    color: white;
+    padding: 9px 29px;
+    border-radius: 5px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+  position: absolute;
+  z-index: 99;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  transition:all 1s ease-in-out;
+}
+
+.dropdown-content button {
+  color: black;
+  border:none;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+.col, .col-md-5, .col-md-6 ,.col-md-7{
+    border: 1px solid #fff;
+    border-radius:5px;
+    resize:both;
+     overflow: auto;
+     width:auto;
+     max-width: 100%;
+    margin: auto;
+      /* border: 1px solid; */
+       /* height:250px; */
+}
+
+.row{
+    margin: 13px 0;
+}
+
+.dropdown-content button:hover {background-color: #BAE9E4}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #266258;
+}
+
+.heart-rate {
+  display:flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: auto;
+}
+
+.fade-in {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #15294A;
+  top: 0;
+  right: 0;
+  animation: heartRateIn 2.5s linear infinite;
+}
+
+.fade-out {
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  top: 0;
+  left: -120%;
+  animation: heartRateOut 2.5s linear infinite;
+  background: #15294A;
+  background: -moz-linear-gradient(left, #15294A 0%, #15294A 50%, rgba(0, 0, 0, 0) 100%);
+  background: -webkit-linear-gradient(left, #15294A 0%, #15294A 50%, rgba(0, 0, 0, 0) 100%);
+  background: -o-linear-gradient(left, #15294A 0%, #15294A 50%, rgba(0, 0, 0, 0) 100%);
+  background: -ms-linear-gradient(left, #15294A 0%, #15294A 50%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to right, #15294A 0%, #15294A 80%, rgba(0, 0, 0, 0) 100%);
+}
+@keyframes heartRateIn {
+  0% {
+    width: 100%;
+  }
+  50% {
+    width: 0;
+  }
+  100% {
+    width: 0;
+  }
+}
+ 
+@keyframes heartRateOut {
+  0% {
+    left: -120%;
+  }
+  30% {
+    left: -120%;
+  }
+  100% {
+    left: 0;
+  }
+}
+    </style>
+</head>
+
+<body>
+    <section class="loading">
+        <div class="heart-rate">
+            <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="70%" height="70%" viewBox="0 0 150 73" enable-background="new 0 0 150 73" xml:space="preserve" style="margin:auto;">
+              <polyline fill="none" stroke="#D52D1F" stroke-width="3" stroke-miterlimit="10" points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+              />
+            </svg>
+            <div class="fade-in"></div>
+            <div class="fade-out"></div>
+          </div>
+    </section>
+<section class="body" style="display:none;">
+    <h1>World Health Monitor</h1>
+    <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="dropdown">
+                <button class="dropbtn">View As</button>
+                <div class="dropdown-content">
+                <button onclick="ViewGHE('GHE', 'GHEPC')">Global Spending</button>
+                <button onclick="ViewGHE('GHEPC', 'GHE')">By Country</button>
+                </div>
+              </div>
+            <div id="GHE"></div>
+            <div style="display:none;" id="GHEPC"></div>
+          </div>
+          
+        </div>
+        <div class="row">
+          <!-- <div class="col">
+            <div id="AIDS"></div>
+          </div> -->
+          
+          <div class="col-md-7">
+            <div id="TB"></div>
+          </div>
+          <div class="col">
+            <div id="polio"></div>
+          </div>
+        </div>
+        <div class="row" style="justify-content: space-evenly;">
+            <div class="col">
+                <div id="malaria"></div>
+            </div>
+            <div class="col-md-7">
+                <div id='myDiv'></div>
+              </div>
+          </div>
+
+        <div class="row">
+        <div class="col">
+          <div class="dropdown">
+            <button class="dropbtn">Compare this data with</button>
+            <div class="dropdown-content">
+            <button onclick="">Global Spending</button>
+            <button onclick="">By Country</button>
+            </div>
+          </div>
+            <div id="MaternalInfant"></div>
+        </div>
+        
+        </div>
+      </div>
+
+  </section>
+<script>
+  window.onload = (event) => {
+  $('.loading').delay( 800 ).fadeOut()
+  $('.body').delay( 800 ).fadeIn()
+};
+
+
+function ViewGHE(chosenView, rejectedView){
+document.getElementById(chosenView).style.display = "block"
+document.getElementById(rejectedView).style.display = "none"
+}
+</script>
+
+  <script>    
+
+    d3.csv('/malaria.csv', function(err, rows){
+  
+    function filter_and_unpack(rows, key, year) {
+    return rows.filter(row => row['certified'] <= year).map(row => row[key])
+    }
+  
+    var frames = []
+    var slider_steps = []
+  
+    var n = 12;
+    var num = 2009;
+    for (var i = 0; i <= n; i++) {
+      var z = filter_and_unpack(rows, 'certified', num)
+      var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+      frames[i] = {data: [{z: z, locations: locations, text: locations}], name: num}
+      slider_steps.push ({
+          label: num.toString(),
+          method: "animate",
+          args: [[num], {
+              mode: "immediate",
+              transition: {duration: 300},
+              frame: {duration: 300}
+            }
+          ]
+        })
+      num = num + 1
+    }
+  
+  var data = [{
+    marker_line_width: 30,
+        type: 'choropleth',
+        locationmode: 'ISO-3',
+        locations: frames[0].data[0].locations,
+        z: frames[0].data[0].z,
+        text: frames[0].data[0].locations,
+        colorscale:[[0,"#488699"], [0.4,"#48998C"], 
+      [1, "#F1FCFA"]], 
+        zauto: false,
+        // zmin: 1963,30
+        zmax: 2021
+  
+  }];
+  
+  var layout = {
+    title: {
+    text:'Countries who have eradicated Malaria',
+    xref: 'paper',
+    // x: 0.05,
+  },
+    geo: {
+        showland: true,
+        landcolor:"rgba(0,0,0,0)",  
+        bgcolor:"rgba(0,0,0,0)",
+        lakecolor:"rgba(0,0,0,0)",
+        oceancolor:"rgba(0,0,0,0)",
+        countrycolor: "black" ,
+          coastlinecolor:"#ccc",
+        // projection: {
+        //     type: 'robinson'
+        // }
+    },
+   automargin:true,
+    font: {
+    family: 'Roboto Condensed, monospace',
+    color: '#BAE9E4'
+    },
+  
+    paper_bgcolor:"rgba(0,0,0,0)",
+      updatemenus: [{
+        x: 0.1,
+        y: 0,
+        yanchor: "top",
+        xanchor: "right",
+        showactive: false,
+        direction: "left",
+        type: "buttons",
+        pad: {"t": 87, "r": 10},
+        buttons: [{
+          method: "animate",
+          args: [null, {
+            fromcurrent: true,
+            transition: {
+              duration: 200,
+            },
+            frame: {
+              duration: 500
+            }
+          }],
+          label: "Play"
+        }, {
+          method: "animate",
+          args: [   
+            [null],
+            {
+              mode: "immediate",
+              transition: {
+                duration: 0
+              },
+              frame: {
+                duration: 0
+              }
+            }
+          ],
+          label: "Pause"
+        }]
+      }],
+      sliders: [{
+        active: 0,
+        steps: slider_steps,
+        x: 0.1,
+        len: 0.9,
+        xanchor: "left",
+        y: 0,
+        yanchor: "top",
+        pad: {t: 50, b: 10},
+        currentvalue: {
+          visible: true,
+          prefix: "Year:",
+          xanchor: "right",
+          font: {
+            size: 20,
+            color: "#9FE0D8"
+          }
+        },
+        transition: {
+          duration: 300,
+          easing: "cubic-in-out"
+        }
+      }]
+  };
+  
+  var config = {responsive: true}
+  
+  Plotly.newPlot('myDiv', data, layout, config).then(function() {
+      Plotly.addFrames('myDiv', frames);
+    });
+  })
+  
+  </script>
+  
+  <script>
+  var trace1 = {
+    x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+    y: [874,	912,	986,	996,	1012,	1035,	994,	1016,	1057,	1103,	1122],
+  type: 'bar',
+  marker: {
+    color: '#48998C'
+  }
+};
+
+var data = [trace1];
+
+var layout = {
+      title: 'Global Health Expenditure',
+      xaxis: {range: [2008, 2022]},
+        yaxis: {range: [0, 1787]},
+          plot_bgcolor:"rgba(0,0,0,0)",
+          paper_bgcolor:"rgba(0,0,0,0)",
+          yaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 15,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 15,
+            
+            zerolinecolor: "rgba(0,0,0,0)",
+            zerolinewidth: 2,
+          },
+          xaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 50,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 2,      
+          },
+          automargin:true,
+          font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+    };
+
+    var config = {responsive: true}
+
+Plotly.newPlot('GHE', data, layout, config);
+  </script>
+
+<script>
+    var trace1 = {
+        x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+    y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ],
+  type: 'bar',
+  marker: {
+    color: '#48998C'
+  }
+};
+
+var data = [trace1];
+
+var layout = {
+      title: 'Polio reported cases',
+      xaxis: {range: [2008, 2022]},
+        yaxis: {range: [0, 1787]},
+          plot_bgcolor:"rgba(0,0,0,0)",
+          paper_bgcolor:"rgba(0,0,0,0)",
+          yaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 15,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 15,
+            
+            zerolinecolor: "rgba(0,0,0,0)",
+            zerolinewidth: 2,
+          },
+          xaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 50,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 2,      
+          },
+          automargin:true,
+          font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+    };
+
+    var config = {responsive: true}
+
+Plotly.newPlot('polio', data, layout, config);
+</script>
+
+<script>
+
+//     var trace3 = {
+//     //     x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+//     // y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ],
+//     fill: 'tozeroy',
+//   type: 'scatter',
+//       marker: {
+//         color: '#6B4FA6',
+//         size: 8
+//       },
+//       line: {
+//           color: '#6B4FA6',
+//           width: 3
+//         },
+//         name: 'Polio Infections'
+//     };
+
+    var traceTB = {
+            x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+    y: [1417403,	1386717,	1353969	,1321313,	1289369,	1261016,	1236143,	1213057],
+    fill: 'tozeroy',
+  type: 'scatter',
+      marker: {
+        color: '#487299',
+        size: 8
+      },
+      line: {
+          color: '#487299',
+          width: 3
+        },
+        name: 'Tuberculosis Infections'
+    }
+
+    var traceAID = {
+        x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+    y: [2399929, 2370918, 2342046, 2314238, 2285709, 2265234, 2243665, 2196714, 2131659, 2042488 ],
+    fill: 'tozeroy',
+  type: 'scatter',
+      marker: {
+        color: '#D52D1F',
+        size: 8
+      },
+      line: {
+          color: '#D52D1F',
+          width: 3
+        },
+        name: 'Aids Infections'
+    }
+    
+    var data = [ traceAID,traceTB];
+    
+    var layout = {
+      title: 'Cases of Tuberculosis and Aids',
+      xaxis: {range: [2008, 2022]},
+      automargin:true,
+        yaxis: {range: [0, 1787]},
+      
+          plot_bgcolor:"rgba(0,0,0,0)",
+          paper_bgcolor:"rgba(0,0,0,0)",
+          yaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 15,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 15,
+            
+            zerolinecolor: "rgba(0,0,0,0)",
+            zerolinewidth: 2,
+          },
+          xaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 50,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 2,      
+          },
+          font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+    };
+
+    var config = {responsive: true}
+    
+    Plotly.newPlot('TB', data, layout, config);
+    </script>
+    <script>
+      
+    var trace3 = {
+    x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+    y: [70.6,	69.5,	66.5,	64.3,	61.8,	59.8,	58.9,	58.7,	59.2,	57.2,	56.3,	59.5],
+    fill: 'tozeroy',
+  type: 'scatter',
+    //   marker: {
+    //     color: '#D52D1F',
+    //     size: 8
+    //   },
+      line: {
+          color: '#D52D1F',
+          width: 3
+        },
+        name: 'Infected'
+    };
+
+
+    var healthy = {
+    x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+    y: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+    fill: 'tozeroy',
+  type: 'scatter',
+      marker: {
+        color: '#9FE0D8',
+        size: 8
+      },
+      line: {
+          color: '#9FE0D8',
+          width: 3
+        },
+        name: 'Healthy'
+    };
+    
+    var data = [healthy, trace3];
+    
+    var layout = {
+      title: 'Malaria infections per 1000 at risk people',
+      automargin:true,
+      xaxis: {range: [2008, 2022]},
+        yaxis: {range: [0, 1787]},
+      
+          plot_bgcolor:"rgba(0,0,0,0)",
+          paper_bgcolor:"rgba(0,0,0,0)",
+          yaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 15,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 15,
+            
+            zerolinecolor: "rgba(0,0,0,0)",
+            zerolinewidth: 2,
+          },
+          xaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 50,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 2,      
+          },
+          font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+    };
+    var config = {responsive: true}
+    
+    Plotly.newPlot('malaria', data, layout, config);
+    </script>
+
+<script>    
+
+    d3.csv('/GHE.csv', function(err, rows){
+  
+    function filter_and_unpack(rows, key, year) {
+    return rows.filter(row => row['2014.00'] <= year).map(row => row[key])
+    }
+  
+    var frames = []
+    var slider_steps = []
+  
+    var n = 9;
+    var num = 2014;
+    for (var i = 0; i <= n; i++) {
+      var z = filter_and_unpack(rows, '2014.00', num)
+      var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+      frames[i] = {data: [{z: z, locations: locations, text: locations}], name: num}
+      slider_steps.push ({
+          label: num.toString(),
+          method: "animate",
+          args: [[num], {
+              mode: "immediate",
+              transition: {duration: 300},
+              frame: {duration: 300}
+            }
+          ]
+        })
+      num = num + 1
+    }
+  
+  var data = [{
+    marker_line_width: 30,
+        type: 'choropleth',
+        locationmode: 'ISO-3',
+        locations: frames[0].data[0].locations,
+        z: frames[0].data[0].z,
+        text: frames[0].data[0].locations,
+        colorscale:[[0,"#488699"], [0.4,"#48998C"], 
+      [1, "#F1FCFA"]], 
+        zauto: false,
+        // zmin: 1963,30
+        zmax: 2021
+  
+  }];
+  
+  var layout = {
+    title: {
+    text:'Global Health Expentiture per GPD',
+    xref: 'paper',
+  },
+    geo: {
+        showland: true,
+        landcolor:"rgba(0,0,0,0)",  
+        bgcolor:"rgba(0,0,0,0)",
+        lakecolor:"rgba(0,0,0,0)",
+        oceancolor:"rgba(0,0,0,0)",
+        countrycolor: "black" ,
+          coastlinecolor:"#ccc",
+        // projection: {
+        //     type: 'robinson'
+        // }
+    },
+   automargin:true,
+    font: {
+    family: 'Roboto Condensed, monospace',
+    color: '#BAE9E4'
+    },
+  
+    paper_bgcolor:"rgba(0,0,0,0)",
+      updatemenus: [{
+        x: 0.1,
+        y: 0,
+        yanchor: "top",
+        xanchor: "right",
+        showactive: false,
+        direction: "left",
+        type: "buttons",
+        pad: {"t": 87, "r": 10},
+        buttons: [{
+          method: "animate",
+          args: [null, {
+            fromcurrent: true,
+            transition: {
+              duration: 200,
+            },
+            frame: {
+              duration: 500
+            }
+          }],
+          label: "Play"
+        }, {
+          method: "animate",
+          args: [   
+            [null],
+            {
+              mode: "immediate",
+              transition: {
+                duration: 0
+              },
+              frame: {
+                duration: 0
+              }
+            }
+          ],
+          label: "Pause"
+        }]
+      }],
+      sliders: [{
+        active: 0,
+        steps: slider_steps,
+        x: 0.1,
+        len: 0.9,
+        xanchor: "left",
+        y: 0,
+        yanchor: "top",
+        pad: {t: 50, b: 10},
+        currentvalue: {
+          visible: true,
+          prefix: "Year:",
+          xanchor: "right",
+          font: {
+            size: 20,
+            color: "#9FE0D8"
+          }
+        },
+        transition: {
+          duration: 300,
+          easing: "cubic-in-out"
+        }
+      }]
+  };
+  
+  var config = {responsive: true}
+  
+  Plotly.newPlot('GHEPC', data, layout, config).then(function() {
+      Plotly.addFrames('GHEPC', frames);
+    });
+  })
+  
+  </script>
+
+<script>    
+  d3.csv('/babymotherhour.csv', function(err, rows){
+  function filter_and_unpack(rows, key, index) {
+    // console.log(rows)
+  return rows.slice(0, index).map(row => row[key])
+  }
+  
+  function unpack(rows, key) {
+      return rows.map(function(row) { return row[key]; });
+  }
+
+  var frames = []
+  var slider_steps = []
+  
+  var n = 12;
+  var num = 2;
+  // console.log(rows)
+  // console.log(rows)
+  for (var i = 2; i <= (rows.length); i++) {
+    var y = filter_and_unpack(rows, 'y', num)
+    // console.log(y)
+    var x = filter_and_unpack(rows, 'x', num)
+    var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+    var colors=filter_and_unpack(rows, 'person', num)
+    frames[num] = {data: [
+      {
+        // type: 'scattergeo',
+        // mode:"markers",
+        lat: y,
+        lon:x,
+        //  locations: locations,
+          // text: locations,
+          marker:{
+        // colorscale:"redor",
+        size:5,
+        color:colors,
+        opacity:0.8
+      },
+        }
+      ], name: num}
+    slider_steps.push ({
+        label: Math.round(num/rows.length*60).toString(),
+        method: "animate",
+        args: [[num], {
+            mode: "immediate",
+            transition: {duration: 0},
+            frame: {duration: 1}
+          }
+        ]
+      })
+    num = num + 1
+  }
+
+var data = [
+  {
+      type: 'scattergeo',
+      mode:"markers",
+      lat:[filter_and_unpack(rows,"y",1)],
+      lon:[filter_and_unpack(rows,"x",1)],
+      marker:{
+        // colorscale:"redor",
+        size:5,
+    //     colorscale:[[0,"#488699"], [0.4,"#48998C"], 
+    // [1, "#F1FCFA"]], 
+        color:[filter_and_unpack(rows,"person",1)],
+        opacity:0.8
+      },
+    //   
+    //   locations: frames[0].data[0].locations,
+    //   z: frames[0].data[0].z,
+    //   text: frames[0].data[0].locations,
+    //   colorscale:[[0,"#10564B"],
+    // [1, "#BAE9E4"]], 
+    //   zauto: false,
+    //   // zmin: 1963,30
+    //   zmax: 2021
+
+},
+// {
+//         type:"choropleth",
+//         locationmode: 'country names',
+//         locations:unpack(rows,"indicator"),
+//         z:unpack(rows,"% of population with access to electricity"),
+//         colorscale:["#EADEDA","#A44A3F"],
+//         showscale:false
+//       }
+];
+var layout = {
+  // title: 'Mother and Infant Deaths Per Hour',
+  geo: {
+      // // showland: true,
+      // // landcolor:"rgba(0,0,0,0)",  
+      // // bgcolor:"rgba(0,0,0,0)",
+      // // lakecolor:"rgba(0,0,0,0)",
+      // // oceancolor:"rgba(0,0,0,0)",
+      // countrycolor: "black" ,
+      // coastlinecolor:"black",
+      // // projection: {
+      // //     type: 'robinson'
+      // // }
+      showland: true,
+      landcolor:"#040F21",  
+      bgcolor:"rgba(0,0,0,0)",
+      lakecolor:"rgba(0,0,0,0)",
+      oceancolor:"rgba(0,0,0,0)",
+      countrycolor: "black" ,
+        coastlinecolor:"#425566",
+  },
+  font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+  paper_bgcolor:"rgba(0,0,0,0)",
+  // height:800,
+  //  width:1000,
+  autosize: false,
+  width: 1000,
+  height: 500,
+  margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 100,
+    pad: 4
+  },
+    updatemenus: [{
+      x: 0.1,
+      y: 0,
+      yanchor: "top",
+      xanchor: "right",
+      showactive: false,
+      direction: "left",
+      type: "buttons",
+      pad: {"t": 87, "r": 10},
+      buttons: [{
+        method: "animate",
+        args: [null, {
+          fromcurrent: true,
+          transition: {
+            duration: 1,
+          },
+          frame: {
+            duration: 0
+          }
+        }],
+        label: "Play"
+      }, {
+        method: "animate",
+        args: [   
+          [null],
+          {
+            mode: "immediate",
+            transition: {
+              duration: 0
+            },
+            frame: {
+              duration: 0
+            }
+          }
+        ],
+        label: "Pause"
+      }]
+    }],
+    sliders: [{
+      active: 0,
+      steps: slider_steps,
+      x: 0.1,
+      len: 0.9,
+      xanchor: "left",
+      y: 0,
+      yanchor: "top",
+      pad: {t: 50, b: 10},
+      currentvalue: {
+        visible: true,
+        suffix: " Minutes from now",
+        xanchor: "right",
+        font: {
+          size: 20,
+          color: "#9FE0D8"
+        }
+      },
+      transition: {
+        duration: 300,
+        easing: "cubic-in-out"
+      }
+    }]
+};
+var config = {responsive: true}
+
+Plotly.newPlot('MaternalInfant', data, layout, config).then(function() {
+    Plotly.addFrames('MaternalInfant', frames);
+  });
+})
+
+//   d3.csv('/dashboard.csv', function(err, rows){
+// function filter_and_unpack(rows, key, year) {
+// return rows.filter(row => row <= year).map(row => row[key])
+// }
+// function unpack(rows, key) {
+//     return rows.map(function(row) { return row[key]; });
+// }
+// var data = [
+// {
+//         type:"choropleth",
+//         locationmode: 'country names',
+//         locations:unpack(rows,"indicator"),
+//         z:unpack(rows,"% of population with access to electricity"),
+//         colorscale:["#EADEDA","#A44A3F"],
+//         showscale:false
+//       },
+
+// ];
+
+// // Plotly.newPlot('myDiv', data, layout).then(function() {
+//   Plotly.addTraces('myDiv', data);
+// // });
+// })
+</script>
+  </body>

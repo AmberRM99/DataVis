@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #chart {
+  text-align: center;
+  margin-top: 40px;
+}
+        </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.0/d3.min.js"></script>
+    </head>
+<body>
+<div id="chart"></div>
+<script>
+const scrollProgress = document.getElementById('scroll-progress');
+const height =
+  document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+// Fake data
+var data = [
+  {
+    year: 2009,
+    popularity:2399929
+  },
+  {
+    year: 2010,
+    popularity: 2370918
+  },
+  {
+    year: 2011,
+    popularity: 2342046
+  },
+  {
+    year: 2012,
+    popularity: 2314238
+  },
+  {
+    year: 2013,
+    popularity: 2285709
+  },
+  {
+    year: 2014,
+    popularity: 2265234
+  },
+  {
+    year: 2015,
+    popularity: 2243665
+  },
+  {
+    year: 2016,
+    popularity: 2196714
+  },
+  {
+    year: 2017,
+    popularity: 2131659
+  },
+  {
+    year: 2018,
+    popularity: 2042488
+  },
+  {
+    year: 2019,
+    popularity: 1989282
+  }
+];
+
+// Create SVG and padding for the chart
+const HIVsvg = d3
+  .select("#chart")
+  .append("svg")
+  .attr("height", 600)
+  .attr("width", 1000);
+const HIVmargin = { top: 0, bottom: 20, left: 30, right: 20 };
+const chart = HIVsvg.append("g").attr("transform", `translate(${HIVmargin.left},0)`);
+const HIVwidth = +HIVsvg.attr("width") - HIVmargin.left - HIVmargin.right;
+const HIVheight = +HIVsvg.attr("height") - HIVmargin.top - HIVmargin.bottom;
+const HIVgrp = chart
+  .append("g")
+  .attr("transform", `translate(-${HIVmargin.left},-${HIVmargin.top})`);
+
+// Add empty scales group for the scales to be attatched to on update 
+chart.append("g").attr("class", "x-axis");
+chart.append("g").attr("class", "y-axis");
+
+// Add empty path
+const path = HIVgrp
+  .append("path")
+  .attr("transform", `translate(${HIVmargin.left},0)`)
+  .attr("fill", "none")
+  .attr("stroke", "steelblue")
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("stroke-width", 1.5);
+
+function updateScales(data) {
+  // Create scales
+  const yScale = d3
+    .scaleLinear()
+    .range([HIVheight, 0])
+    .domain([0, d3.max(data, dataPoint => dataPoint.popularity)]);
+  const xScale = d3
+    .scaleLinear()
+    .range([0, HIVwidth])
+    .domain(d3.extent(data, dataPoint => dataPoint.year));
+  return { yScale, xScale };
+}
+
+function createLine(xScale, yScale) {
+  return line = d3
+  .line()
+  .x(dataPoint => xScale(dataPoint.year))
+  .y(dataPoint => yScale(dataPoint.popularity));
+}
+
+function updateAxes(data, chart, xScale, yScale) {
+  chart
+    .select(".x-axis")
+    .attr("transform", `translate(0,${HIVheight})`)
+    .call(d3.axisBottom(xScale).ticks(data.length).tickFormat(d3.format("d")));
+  chart
+    .select(".y-axis")
+    .attr("transform", `translate(0, 0)`)
+    .call(d3.axisLeft(yScale));
+}
+
+function updatePath(data, line) {
+  const updatedPath = d3
+    .select("path")
+    .interrupt()
+    .datum(data)
+    .attr("d", line);
+
+  const pathLength = updatedPath.node().getTotalLength();
+  // D3 provides lots of transition options, have a play around here:
+  // https://github.com/d3/d3-transition
+  const transitionPath = d3
+    .transition()
+    .ease(d3.easeSin)
+    .duration(2500);
+  updatedPath
+    .attr("stroke-dashoffset", pathLength)
+    .attr("stroke-dasharray", pathLength)
+    .transition(transitionPath)
+    .attr("stroke-dashoffset", 0);
+}
+
+function updateChart(data) {
+    const { yScale, xScale } = updateScales(data);
+    const line = createLine(xScale, yScale);
+    updateAxes(data, chart, xScale, yScale);
+    updatePath(data, line);
+}
+
+updateChart(data);
+// Update chart when button is clicked
+
+</script>
+</body>
+</html>

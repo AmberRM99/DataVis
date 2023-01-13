@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+
+<html lang="en" class="mac chrome102 js"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+<script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+html, body, section {
+  block-size: 100%;
+    background: #15294A;
+    font-family:'Roboto Condensed'
+}
+
+h1{
+  text-align:center;
+  font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    display: block;
+    /* font-size: 2em; */
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+
+h3{
+  display: block;
+    font-size: 1.17em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h4{
+  display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+h6{
+  display: block;
+    font-size: 0.67em;
+    margin-block-start: 2.33em;
+    margin-block-end: 2.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+html {
+  scroll-snap-type: y mandatory;
+}
+
+#chart {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.TotalLives{
+  background-color:#15294A;
+  padding:0;
+  display:flex;
+  flex-direction: column;
+}
+
+.TotalLives .row{
+  display: flex;
+    flex-direction: row-reverse;
+}
+
+.peopleChartTxt {
+  font-size: 1.5rem;
+    height: 8rem;
+}
+
+.col-8{
+  justify-content: space-around;
+  display:flex;
+}
+
+.hideBG{
+  background-color: #15294A;
+  width: 100%;
+  height:100%;
+  
+  clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 25%, 75% 25%, 75% 75%, 25% 75%, 25% 100%, 100% 100%, 100% 0%);
+  position: absolute;
+}
+
+.geolayer{
+  transform: scale(1.2)translateX(-84px)translateY(-49px);
+}
+
+section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-snap-type: y mandatory;
+  
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  color: #BAE9E4;
+  background: #15294A;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 4rem;
+}
+
+.citation{
+  text-align:center;
+  font-size: 0.7rem;
+}
+
+#scroll-progress {
+  position: fixed;
+  bottom: 0;
+  width: 2%;
+  height: 4px;
+  background: #D52D1F;
+  z-index: 10000;
+}
+
+.maskB {
+  -webkit-mask-image: url(baby.svg);
+  mask-image: url(baby.svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;    
+}
+
+ .maskM {
+  -webkit-mask-image: url(mother.svg);
+  mask-image: url(mother.svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;    
+}
+
+.babyPercent{
+  background-image: linear-gradient(0deg, #48998C 70%, #48998c4a 72%);
+   
+}
+.babyPercent, .motherPercent{
+  width: 20rem;
+  height: 20rem;
+}
+
+.motherPercent{
+  width: 15rem;
+  background:linear-gradient(0deg,#D52D1F 95%,#D52D1F4a 97%)
+}
+
+.loadDash {
+    position: relative;
+    display: inline-block;
+    padding: 1rem;
+    cursor: pointer;
+    color: #FFF;
+    letter-spacing: 1px;
+    background: #377e72 none repeat scroll 0% 0%;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 25%), 0 1px 0 rgb(255 255 255 / 25%) inset, 0 0 0 rgb(0 0 0 / 50%) inset, 0 1.25rem 0 rgb(255 255 255 / 8%) inset, 0 -1.25rem 1.25rem rgb(0 0 0 / 30%) inset, 0 1.25rem 1.25rem rgb(255 255 255 / 10%) inset;
+    transition: all 0.2s linear 0s;
+    margin: 0.618rem;
+    width: 26%;
+    text-align: center;
+    font-size: 1.4rem;
+    text-decoration: none;
+}
+
+.loadDash i{
+  font-size:2rem;
+  padding-right:5px;
+}
+
+.loadDash:hover,
+.loadDash:focus {
+  text-decoration: none;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 0 0 rgba(0, 0, 0, 0.25) inset,
+    0 20px 0 rgba(255, 255, 255, 0.03) inset,
+    0 -20px 20px rgba(0, 0, 0, 0.15) inset,
+    0 20px 20px rgba(255, 255, 255, 0.05) inset;
+}
+.loadDash:active {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0) inset,
+    0 0 5px rgba(0, 0, 0, 0.5) inset,
+    0 20px 0 rgba(255, 255, 255, 0.03) inset,
+    0 -20px 20px rgba(0, 0, 0, 0.15) inset,
+    0 20px 20px rgba(255, 255, 255, 0.05) inset;
+}
+
+.loadDash::before {
+  content: "";
+  display: block;
+  position: absolute;
+  background:-moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+  background:-webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(50%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
+  background:-webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 50%,rgba(255,255,255,0) 100%);
+  background:linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 50%,rgba(255,255,255,0) 100%);
+  padding: x 12px;
+  top: 0;
+  left: 15%;
+  height: 1px;
+  width: 40%;
+  box-shadow: 0 1px 5px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease-in-out 0s;
+}
+.loadDash:active::before {
+  opacity: 0;
+}
+.loadDash:hover::before {
+  left: 45%;
+}
+
+.blocker{
+  width: 90%;
+    height: 100%;
+    position: absolute;
+    z-index: 99;
+}
+
+.MotherInfantLoss{
+    display: flex;
+    flex-direction: column;
+    /* padding: 0 27px; */
+    width: 30%;
+    margin-right: 1.5rem;
+}
+
+.livesSaved::after {
+  content: '1,627,'counter(count);
+  animation: counter 3s linear 1 alternate;
+  counter-reset: count 182;
+}
+
+.babyStat, .motherStat{
+  font-size:1.5rem;
+}
+
+.babyStat::after {
+  content: counter(Bcount)'%';
+  animation: counterBMort 3s ease-out 1 alternate;
+  counter-reset: Bcount 27;
+}
+.motherStat::after {
+  content: counter(Mcount) ;
+  animation: counterMMort 3s ease-out 1 alternate;
+  counter-reset: Mcount 295000;
+}
+
+@keyframes counter {
+  0% {
+    counter-set: count 71;
+  }
+  10% {
+    counter-set: count 83;
+  }
+  20% {
+    counter-set: count 96;
+  }
+  30% {
+    counter-set: count 107;
+  }
+  40% {
+    counter-set: count 111;
+  }
+  50% {
+    counter-set: count 118;
+  }
+  60% {
+    counter-set: count 129;
+  }
+  70% {
+    counter-set: count 143;
+  }
+  80% {
+    counter-set: count 154;
+  }
+  90% {
+    counter-set: count 168;
+  }
+  100% {
+    counter-set: count 182;
+  }
+}
+
+@keyframes counterMMort {
+  0% {
+    counter-set: Mcount 354000;
+  }
+  10% {
+    counter-set: Mcount 343000;
+  }
+  20% {
+    counter-set: Mcount 334000;
+  }
+  30% {
+    counter-set: Mcount 326000;
+  }
+  40% {
+    counter-set: Mcount 319000;
+  }
+  50% {
+    counter-set: Mcount 313000;
+  }
+  60% {
+    counter-set: Mcount 306000;
+  }
+  70% {
+    counter-set: Mcount 300000;
+  }
+  100% {
+    counter-set: Mcount 295000;
+  }
+}
+
+@keyframes counterBMort {
+  0% {
+    counter-set: Bcount 39;
+  }
+  10% {
+    counter-set: Bcount 37;
+  }
+  20% {
+    counter-set: Bcount 36;
+  }
+  30% {
+    counter-set: Bcount 35;
+  }
+  40% {
+    counter-set: Bcount 33;
+  }
+  50% {
+    counter-set: Bcount 32;
+  }
+  60% {
+    counter-set: Bcount 31;
+  }
+  70% {
+    counter-set: Bcount 30;
+  }
+  80% {
+    counter-set: Bcount 29;
+  }
+  90% {
+    counter-set: Bcount 29;
+  }
+  100% {
+    counter-set: Bcount 27;
+  }
+}
+
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+
+<!-- <svg id="ManIcon" width="240" height="320" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5,2H2.7C3,1.8,3.3,1.5,3.3,1.1c0-0.6-0.4-1-1-1c-0.6,0-1,0.4-1,1c0,0.4,0.2,0.7,0.6,0.9H1.1C0.7,2,0.4,2.3,0.4,2.6v1.9c0,0.3,0.3,0.6,0.6,0.6h0.2c0,0,0,0.1,0,0.1v1.9c0,0.3,0.2,0.6,0.3,0.6h1.3c0.2,0,0.3-0.3,0.3-0.6V5.3c0,0,0-0.1,0-0.1h0.2c0.3,0,0.6-0.3,0.6-0.6V2.6C4.1,2.3,3.8,2,3.5,2z" fill="#FFF"/>
+  </svg> -->
+
+<section>
+  <h1>Global Healthcare has come a long way in 14 years</h1>
+</section>
+<section>
+  <h3>Global healthcare spending has increased
+  <!-- <div id="chart"></div></h1> -->
+  </h3><div id="GHE"></div>
+</section>
+<section>
+  <h3>Health Expenditure Map</h3>
+</section>
+<section>
+  <h6>The effects of this spending can be seen in some of the most notable diseases of our time</h6>
+</section>
+<section>
+  <h3>The total number of AIDS cases dropped</h3>
+  <div id="AIDS"></div>
+</section>
+<section>
+  <div id="polio"></div>
+  <div style="display:flex;flex-direction: column;" ><h3>Polio cases went down </h3><h6>(but we know they can go lower)</h6></div>
+</section>
+<section>
+  <h3>Fewer people are living with Tuberculosis</h3>
+  <div id="TB"></div>
+</section>
+<section>
+  <div id="malaria"></div>
+  <h3>Less at risk people are catching Malaria</h3>
+</section>
+<section>
+  <h3>Infact more than half the world has eradicated Malaria</h3>
+  <div id='myDiv'></div>
+</section>
+<section style="display:flex; flex-direction:column;">
+  <h3 style="text-align:center;">More pregnancys end in a healthy baby and mother now than in 2009</h3>
+  <!-- <img class="maskB" alt="Baby Pram" src="/baby.svg"> -->
+  <div class="container" style="display:flex; flex-direction:row; justify-content:space-around;">
+<div class="row" style="display: flex;">
+  <div class="col maskB babyPercent" > </div>
+  <div class="col"><span id="BMortality"></span> <p style="font-size:1rem;">Infant Mortality Rate</p></div>
+</div>
+<div class="row" style="display: flex;">
+  <div class="maskM motherPercent"></div>
+  <div class="col"><span id="MMortality"></span> <p style="font-size:1rem;">Maternal deaths</p></div>
+</div>
+  </div>
+  <!-- <p class="citation">*https://data.worldbank.org/indicator/SH.STA.MMRT</p> -->
+</section>
+<section>
+  <div class="MotherInfantLoss">
+  <h4>But there's still more work to be done</h4>
+<p style="font-size:1.3rem;">Every hour, hundreds of families are devastated by the loss of an expectant mother or baby during childbirth</p>
+</div>
+<div id="MotherBaby"></div>
+</section>
+<section  style='display:flex; flex-direction:column;'>
+  <span style="font-size:8rem;" class="fa-sharp fa-solid fa-person"></span>
+  <h6>An estimated <span style="font-size:0.8rem; position:relative; bottom:1.5rem;">*</span> <span id="livesFigure"></span>  lives were saved through medical advancements</h6>
+  <p class='citation'> *Estimate based on 10 year difference in Tuberculosis, Malaria, Tropical Disease and HIV/AIDS deaths</p>
+</section>
+<!--3284078-->
+<section class="TotalLives">
+
+  <div class="container">
+    <div class="row" >
+      <div class="col-8">
+        <div class="blocker" style="background: linear-gradient(90deg, transparent 53%, #15294a 55%)"></div>
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+      </div>
+      <div class="col peopleChartTxt"> 25,7596 less lives lost to Malaria
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <div class="blocker" style="background: linear-gradient(90deg, transparent 85%, #15294a 87%);"></div>
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+      </div>
+      <div class="col peopleChartTxt">
+        48,0000 less lives lost to HIV/AIDS
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <div class="blocker" style="background: linear-gradient(90deg, transparent 87%, #15294a 89%);"></div>
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+        <img height="60" src="/icons8-standing-man-100.png">
+      </div>
+      <div class="col peopleChartTxt">
+        49,4810 less lives lost to TB
+      </div>
+    </div>
+    <p class="citation">One person per 5000 estimated lives saved</p>
+  </div>
+  
+</section>
+<section style='display:flex; flex-direction:column;'>
+  <h1>How many more lives can be saved in the next 10 years?</h1>
+  <a class="loadDash" href="/DataVisStoryDashboard.html"> <i class="fas fa-clipboard-medical"></i> Monitor the World's Health </a>
+</section>
+
+<script>
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+$.fn.isInViewport = function() {
+    var elementTop = $(this).offset().top;
+    var elementBottom = elementTop + $(this).outerHeight();
+
+    var viewportTop = $(window).scrollTop();
+    var viewportBottom = viewportTop + $(window).height();
+
+    return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+
+$(window).on('resize scroll', function() {
+  const scrollProgress = document.getElementById('scroll-progress');
+  const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+  scrollProgress.style.width = `${(scrollTop / height) * 100}%`;
+
+    if($('#myDiv').isInViewport()){
+    
+    }
+    if ($('#MMortality').isInViewport()) {
+        $('#MMortality').addClass('motherStat')
+    } else{
+      $('#MMortality').removeClass('motherStat')
+    }
+    if ($('#BMortality').isInViewport()) {
+        $('#BMortality').addClass('babyStat')
+    } else{
+      $('#BMortality').removeClass('babyStat')
+    }
+    if ($('#livesFigure').isInViewport()) {
+        $('#livesFigure').addClass('livesSaved')
+    } else{
+      $('#livesFigure').removeClass('livesSaved')
+    }
+});
+</script>
+
+<script>    
+
+  d3.csv('/malaria.csv', function(err, rows){
+
+  function filter_and_unpack(rows, key, year) {
+  return rows.filter(row => row['certified'] <= year).map(row => row[key])
+  }
+
+  var frames = []
+  var slider_steps = []
+
+  var n = 12;
+  var num = 2009;
+  for (var i = 0; i <= n; i++) {
+    var z = filter_and_unpack(rows, 'certified', num)
+    var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+    frames[i] = {data: [{z: z, locations: locations, text: locations}], name: num}
+    slider_steps.push ({
+        label: num.toString(),
+        method: "animate",
+        args: [[num], {
+            mode: "immediate",
+            transition: {duration: 300},
+            frame: {duration: 300}
+          }
+        ]
+      })
+    num = num + 1
+  }
+
+
+var data = [{
+  marker_line_width: 10,
+      type: 'choropleth',
+      locationmode: 'ISO-3',
+      locations: frames[0].data[0].locations,
+      z: frames[0].data[0].z,
+      text: frames[0].data[0].locations,
+      colorscale:[[0,"#488699"], [0.4,"#48998C"], 
+    [1, "#F1FCFA"]], 
+      zauto: false,
+      // zmin: 1963,30
+      zmax: 2021
+
+}];
+
+
+var layout = {
+  geo: {
+      showland: true,
+      landcolor:"rgba(0,0,0,0)",  
+      bgcolor:"rgba(0,0,0,0)",
+      lakecolor:"rgba(0,0,0,0)",
+      oceancolor:"rgba(0,0,0,0)",
+      countrycolor: "black" ,
+        coastlinecolor:"#ccc",
+      // projection: {
+      //     type: 'robinson'
+      // }
+  },
+ automargin:true,
+  font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#BAE9E4'
+  },
+
+  paper_bgcolor:"rgba(0,0,0,0)",
+   height:700,
+    updatemenus: [{
+      x: 0.1,
+      y: 0,
+      yanchor: "top",
+      xanchor: "right",
+      showactive: false,
+      direction: "left",
+      type: "buttons",
+      pad: {"t": 87, "r": 10},
+      buttons: [{
+        method: "animate",
+        args: [null, {
+          mode: "immediate",
+          fromcurrent: true,
+          transition: {
+            duration: 200,
+          },
+          frame: {
+            duration: 500
+          }
+        }],
+        label: "Play"
+      }, {
+        method: "animate",
+        args: [   
+          [null],
+          {
+            mode: "immediate",
+            transition: {
+              duration: 0
+            },
+            frame: {
+              duration: 0
+            }
+          }
+        ],
+        label: "Pause"
+      }]
+    }],
+    sliders: [{
+      active: 0,
+      steps: slider_steps,
+      x: 0.1,
+      len: 0.9,
+      xanchor: "left",
+      y: 0,
+      yanchor: "top",
+      pad: {t: 50, b: 10},
+      currentvalue: {
+        visible: true,
+        prefix: "Year:",
+        xanchor: "right",
+        font: {
+          size: 20,
+          color: "#9FE0D8"
+        }
+      },
+      transition: {
+        duration: 300,
+        easing: "cubic-in-out"
+      }
+    }]
+};
+
+var config = {responsive: true}
+
+Plotly.newPlot('myDiv', data, layout, config).then(function() {
+    Plotly.addFrames('myDiv', frames);
+  });
+})
+
+</script>
+
+<script>
+
+Plotly.newPlot('AIDS', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [2399929, 2370918, 2342046, 2314238, 2285709, 2265234, 2243665, 2196714, 2131659, 2042488, ],
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2020]},
+  yaxis: {range: [2042488, 2399929]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+
+}).then(function () {
+  Plotly.addFrames('AIDS', [
+    {
+      data: [{x: [0, 0], y: [0, 0]}],
+      name: 'frame1'
+    }, {
+      data: [{x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [2399929, 2370918, 2342046, 2314238, 2285709, 2265234, 2243665, 2196714, 2131659, 2042488 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationAids() {
+  Plotly.animate('AIDS', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>
+<script>
+   var trace3 = {
+    x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+    y: [70.6,	69.5,	66.5,	64.3,	61.8,	59.8,	58.9,	58.7,	59.2,	57.2,	56.3,	59.5],
+    fill: 'tozeroy',
+  type: 'scatter',
+    //   marker: {
+    //     color: '#D52D1F',
+    //     size: 8
+    //   },
+      line: {
+          color: '#D52D1F',
+          width: 3
+        },
+        name: 'Infected'
+    };
+
+
+    var healthy = {
+    x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+    y: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+    fill: 'tozeroy',
+  type: 'scatter',
+      marker: {
+        color: '#9FE0D8',
+        size: 8
+      },
+      line: {
+          color: '#9FE0D8',
+          width: 3
+        },
+        name: 'Healthy'
+    };
+    
+    var data = [healthy, trace3];
+    
+    var layout = {
+      title: 'Malaria infections per 1000 at risk people',
+      automargin:true,
+      xaxis: {range: [2008, 2022]},
+        yaxis: {range: [0, 1787]},
+      
+          plot_bgcolor:"rgba(0,0,0,0)",
+          paper_bgcolor:"rgba(0,0,0,0)",
+          yaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 15,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 15,
+            
+            zerolinecolor: "rgba(0,0,0,0)",
+            zerolinewidth: 2,
+          },
+          xaxis: {
+            tickcolor: "rgba(0,0,0,0)",
+            tickwidth: 50,
+            
+            gridcolor: "rgba(0,0,0,0)",
+            gridwidth: 2,      
+          },
+          font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+    };
+    var config = {responsive: true}
+    
+    Plotly.newPlot('malaria', data, layout, config);
+</script>
+<script>
+  Plotly.newPlot('polio', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ],
+  
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2022]},
+  yaxis: {range: [0, 1787]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+//MAKE A LOOP FOR FRAMES, MAKE IT LONGER EACH TIME
+}).then(function () {
+  Plotly.addFrames('polio', [
+    {
+      
+      data: [{x: [2009, 2010], y: [1787, 1412]}],
+      name: 'frame1'
+    }, {
+      data: [{  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationPolio() {
+  Plotly.animate('polio', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>
+
+<script>
+  Plotly.newPlot('GHE', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [874,	912,	986,	996,	1012,	1035,	994,	1016,	1057,	1103,	1122],
+  
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2022]},
+  yaxis: {range: [0, 1787]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+//MAKE A LOOP FOR FRAMES, MAKE IT LONGER EACH TIME
+}).then(function () {
+  Plotly.addFrames('GHE', [
+    {
+      
+      data: [{x: [2009, 2010], y: [1787, 1412]}],
+      name: 'frame1'
+    }, {
+      data: [{  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+  y: [874,	912,	986,	996,	1012,	1035,	994,	1016,	1057,	1103,	1122]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationGHE() {
+  Plotly.animate('GHE', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>
+
+<script>
+  Plotly.newPlot('TB', [{
+  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+  y: [1417403,	1386717,	1353969	,1321313,	1289369,	1261016,	1236143,	1213057],
+  
+  line: {
+    color: '#9FE0D8',
+    width: 3
+  },
+}], {
+  xaxis: {range: [2008, 2022]},
+  yaxis: {range: [0, 1787]},
+
+    plot_bgcolor:"rgba(0,0,0,0)",
+    paper_bgcolor:"rgba(0,0,0,0)",
+    yaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 15,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 15,
+      
+      zerolinecolor: "rgba(0,0,0,0)",
+      zerolinewidth: 2,
+    },
+    xaxis: {
+      tickcolor: "rgba(0,0,0,0)",
+      tickwidth: 50,
+      
+      gridcolor: "rgba(0,0,0,0)",
+      gridwidth: 2,      
+    },
+     font: {
+  family: 'Roboto Condensed, monospace',
+  size: 18,
+  color: '#fff'
+  },
+
+}).then(function () {
+  Plotly.addFrames('TB', [
+    {
+      data: [{x: [0, 0], y: [0, 0]}],
+      name: 'frame1'
+    }, {
+      data: [{  x: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
+  y: [1787,	1412,	716	,293,	481,	415,	106,	42,	118,	138,	554	,1253,	649 ]}],
+      name: 'frame2'
+    }
+  ]);
+})
+
+function startAnimationTB() {
+  Plotly.animate('TB', ['frame1', 'frame2'], {
+    frame: [
+      {duration: 1500},
+      {duration: 500},
+    ],
+    transition: [
+      {duration: 800, easing: 'elastic-in'},
+      {duration: 100, easing: 'cubic-in'},
+    ],
+    mode: 'afterall'
+  })
+}
+</script>
+
+<script>    
+  d3.csv('/babymotherhour.csv', function(err, rows){
+  function filter_and_unpack(rows, key, index) {
+    // console.log(rows)
+  return rows.slice(0, index).map(row => row[key])
+  }
+  
+  function unpack(rows, key) {
+      return rows.map(function(row) { return row[key]; });
+  }
+
+  var frames = []
+  var slider_steps = []
+  
+  var n = 12;
+  var num = 2;
+  // console.log(rows)
+  // console.log(rows)
+  for (var i = 2; i <= (rows.length); i++) {
+    var y = filter_and_unpack(rows, 'y', num)
+    // console.log(y)
+    var x = filter_and_unpack(rows, 'x', num)
+    var locations = filter_and_unpack(rows, 'Alpha-3 code', num)
+    var colors=filter_and_unpack(rows, 'person', num)
+    frames[num] = {data: [
+      {
+        // type: 'scattergeo',
+        // mode:"markers",
+        lat: y,
+        lon:x,
+        //  locations: locations,
+          // text: locations,
+          marker:{
+        // colorscale:"redor",
+        size:5,
+        color:colors,
+        colorbar: {
+            autotic: false,
+            tickprefix: '$',
+            len: 0.8,
+            x: 1,
+            y: 0.6
+        },
+        opacity:0.8
+      },
+        }
+      ], name: num}
+    slider_steps.push ({
+        label: Math.round(num/rows.length*60).toString(),
+        method: "animate",
+        args: [[num], {
+            mode: "immediate",
+            transition: {duration: 0},
+            frame: {duration: 1}
+          }
+        ]
+      })
+    num = num + 1
+  }
+
+var data = [
+  {
+      type: 'scattergeo',
+      mode:"markers",
+      lat:[filter_and_unpack(rows,"y",1)],
+      lon:[filter_and_unpack(rows,"x",1)],
+      marker:{
+        size:5,
+        color:[filter_and_unpack(rows,"person",1)],
+        opacity:0.8
+      },
+
+},
+
+];
+var layout = {
+  geo: {
+      showland: true,
+      landcolor:"#040F21",  
+      bgcolor:"rgba(0,0,0,0)",
+      lakecolor:"rgba(0,0,0,0)",
+      oceancolor:"rgba(0,0,0,0)",
+      countrycolor: "black" ,
+        coastlinecolor:"#485976",
+  },
+  font: {
+        family: 'Roboto Condensed, monospace',
+        color: '#BAE9E4'
+        },
+  paper_bgcolor:"rgba(0,0,0,0)",
+  height:700,
+  // width:1000,
+    updatemenus: [{
+      x: 0.1,
+      y: 0,
+      yanchor: "top",
+      xanchor: "right",
+      showactive: false,
+      direction: "left",
+      type: "buttons",
+      pad: {"t": 87, "r": 10},
+      buttons: [{
+        method: "animate",
+        args: [null, {
+          fromcurrent: true,
+          transition: {
+            duration: 0,
+          },
+          frame: {
+            duration: 40,
+            redraw: false
+          }
+        }],
+        label: "Play"
+      }, {
+        method: "animate",
+        args: [
+          [null],
+          {
+            mode: "immediate",
+            transition: {
+              duration: 0
+            },
+            frame: {
+              duration: 0,
+              redraw: false
+            }
+          }
+        ],
+        label: "Pause"
+      }]
+    }],
+    sliders: [{
+      active: 0,
+      steps: slider_steps,
+      x: 0.1,
+      len: 0.9,
+      xanchor: "left",
+      y: 0,
+      yanchor: "top",
+      pad: {t: 50, b: 10},
+      currentvalue: {
+        visible: true,
+        suffix: " Minutes from now",
+        xanchor: "right",
+        font: {
+          size: 20,
+          color: "#9FE0D8"
+        }
+      },
+      transition: {
+        duration: 300,
+        easing: "cubic-in-out"
+      }
+    }]
+};
+
+
+Plotly.newPlot('MotherBaby', data, layout).then(function() {
+    Plotly.addFrames('MotherBaby', frames);
+  });
+})
+
+//   d3.csv('/dashboard.csv', function(err, rows){
+// function filter_and_unpack(rows, key, year) {
+// return rows.filter(row => row <= year).map(row => row[key])
+// }
+// function unpack(rows, key) {
+//     return rows.map(function(row) { return row[key]; });
+// }
+// var data = [
+// {
+//         type:"choropleth",
+//         locationmode: 'country names',
+//         locations:unpack(rows,"indicator"),
+//         z:unpack(rows,"% of population with access to electricity"),
+//         colorscale:["#EADEDA","#A44A3F"],
+//         showscale:false
+//       },
+
+// ];
+
+// // Plotly.newPlot('myDiv', data, layout).then(function() {
+//   Plotly.addTraces('myDiv', data);
+// // });
+// })
+</script>
+</body>
+</html>
